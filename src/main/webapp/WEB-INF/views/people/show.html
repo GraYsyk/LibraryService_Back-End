@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Person</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            padding: 0;
+            background-color: #f4f4f4; /* Светло-серый фон */
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+        table th, table td {
+            padding: 10px;
+            text-align: left;
+        }
+        table th {
+            background-color: #f8f8f8;
+            border-bottom: 2px solid #ddd;
+        }
+        table td {
+            border-bottom: 1px solid #ddd;
+        }
+        a, input[type="submit"] {
+            display: inline-block;
+            padding: 10px 20px;
+            margin: 5px 0;
+            text-decoration: none;
+            background-color: #4CAF50; /* Зеленый цвет для ссылок и кнопок */
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        input[type="submit"] {
+            background-color: #f44336; /* Красный цвет для кнопки удаления */
+        }
+        a:hover, input[type="submit"]:hover {
+            background-color: #45a049; /* Более темный зеленый при наведении для ссылок */
+        }
+        input[type="submit"]:hover {
+            background-color: #e41e1e; /* Темно-красный при наведении для кнопки удаления */
+        }
+
+        /* Логотип */
+        .logo {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            font-size: 28px; /* Увеличенный размер шрифта */
+            font-weight: bold;
+            text-decoration: none; /* Убираем подчеркивание для ссылки */
+            display: flex;
+            align-items: baseline; /* Выравнивание по базовой линии */
+            gap: 5px; /* Пробел между словами */
+        }
+        .logo span:first-child {
+            color: #4CAF50; /* Первое слово - зеленый цвет */
+            transition: color 0.3s ease; /* Плавный переход цвета */
+        }
+        .logo span:last-child {
+            color: #a8e6cf; /* Второе слово - светло-зеленый */
+            transition: color 0.3s ease; /* Плавный переход цвета */
+        }
+        /* Эффект при наведении: цвета меняются местами */
+        .logo:hover span:first-child {
+            color: #a8e6cf; /* Первое слово становится светло-зеленым */
+        }
+        .logo:hover span:last-child {
+            color: #4CAF50; /* Второе слово становится зеленым */
+        }
+    </style>
+</head>
+<body>
+
+<!-- Логотип-ссылка -->
+<a th:href="@{/}" class="logo">
+    <span>Library</span> <span>Service</span>
+</a>
+
+<div class="container">
+    <h2>Person Information</h2>
+    <table>
+        <tr>
+            <th>Name</th>
+            <td th:text="${person.getName()}">John Doe</td>
+        </tr>
+        <tr>
+            <th>Age</th>
+            <td th:text="${person.getAge()}">30</td>
+        </tr>
+    </table>
+
+    <h3>Person Books:</h3>
+    <ul>
+        <li th:each="book : ${books}">
+            <span th:text="${book.title}">Book Title</span> by
+            <span th:text="${book.author}">Author Name</span>
+            (<span th:text="${book.year}">Year</span>)
+
+            <!-- Форма для отмены книги -->
+            <form th:action="@{/people/{id}/delete(id=${person.id})}" th:method="PATCH" style="display: inline;">
+                <input type="hidden" name="bookid" th:value="${book.id}"/>
+                <input type="submit" value="Cancel Book" style="background-color: #f44336; color: white; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer;">
+            </form>
+        </li>
+        <li th:if="${#lists.isEmpty(books)}">No books found</li>
+    </ul>
+
+    <a th:href="@{/people/{id}/edit(id=${person.getId()})}">Edit</a>
+
+    <form th:method="DELETE" th:action="@{/people/{id}(id=${person.getId()})}">
+        <input type="submit" value="Delete">
+    </form>
+</div>
+</body>
+</html>

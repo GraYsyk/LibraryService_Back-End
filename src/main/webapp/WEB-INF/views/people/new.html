@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>New Person Adder</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f4f4f4; /* Легкий серый фон */
+      margin: 0;
+      padding: 20px;
+      position: relative; /* Добавлено для позиционирования логотипа */
+    }
+    .container {
+      max-width: 600px;
+      margin: 0 auto;
+      background-color: #fff;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+    h1 {
+      text-align: center;
+      color: #333;
+    }
+    form {
+      display: flex;
+      flex-direction: column;
+    }
+    label {
+      margin: 10px 0 5px 0;
+      font-weight: bold;
+      color: #333;
+    }
+    input[type="text"] {
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      font-size: 16px;
+      width: 100%;
+      box-sizing: border-box;
+    }
+    input[type="submit"] {
+      padding: 10px;
+      margin-top: 20px;
+      background-color: #4CAF50; /* Зеленый цвет кнопки */
+      color: white;
+      border: none;
+      border-radius: 5px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+    input[type="submit"]:hover {
+      background-color: #45a049; /* Более темный зеленый при наведении */
+    }
+    .error-message {
+      color: red;
+      font-size: 14px;
+      margin-top: 5px;
+    }
+
+    /* Логотип */
+    .logo {
+      position: absolute;
+      top: 20px;
+      left: 20px;
+      font-size: 28px; /* Увеличенный размер шрифта */
+      font-weight: bold;
+      text-decoration: none; /* Убираем подчеркивание для ссылки */
+      display: flex;
+      align-items: baseline; /* Выравнивание по базовой линии */
+      gap: 5px; /* Пробел между словами */
+    }
+    .logo span:first-child {
+      color: #4CAF50; /* Первое слово - зеленый цвет */
+      transition: color 0.3s ease; /* Плавный переход цвета */
+    }
+    .logo span:last-child {
+      color: #a8e6cf; /* Второе слово - светло-зеленый */
+      transition: color 0.3s ease; /* Плавный переход цвета */
+    }
+    /* Эффект при наведении: цвета меняются местами */
+    .logo:hover span:first-child {
+      color: #a8e6cf; /* Первое слово становится светло-зеленым */
+    }
+    .logo:hover span:last-child {
+      color: #4CAF50; /* Второе слово становится зеленым */
+    }
+  </style>
+</head>
+<body>
+
+<!-- Логотип-ссылка -->
+<a th:href="@{/}" class="logo">
+  <span>Library</span> <span>Service</span>
+</a>
+
+<div class="container">
+  <h1>Add a New Person</h1>
+
+  <form th:method="POST" th:action="@{/people}" th:object="${person}">
+    <label for="name">Enter name:</label>
+    <input type="text" th:field="*{name}" id="name"/>
+    <div class="error-message" th:if="${#fields.hasErrors('name')}" th:errors="*{name}">Name error</div>
+
+    <label for="age">Enter age:</label>
+    <input type="text" th:field="*{age}" id="age"/>
+    <div class="error-message" th:if="${#fields.hasErrors('age')}" th:errors="*{age}">Age error</div>
+
+    <input type="submit" value="Create!">
+  </form>
+</div>
+
+</body>
+</html>

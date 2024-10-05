@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>All People</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4; /* Легкий серый фон */
+            margin: 0;
+            padding: 20px;
+            position: relative; /* Добавлено для позиционирования логотипа */
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+        .person-list {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        .person-card {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .person-card a {
+            font-size: 18px;
+            text-decoration: none;
+            color: #333;
+            font-weight: bold;
+        }
+        .person-card a:hover {
+            color: #4CAF50; /* Зеленый цвет при наведении */
+        }
+        hr {
+            margin: 20px 0;
+            border: none;
+            border-top: 2px solid #ddd;
+        }
+        .create-button {
+            display: block;
+            width: 200px;
+            margin: 0 auto;
+            padding: 10px;
+            background-color: #4CAF50; /* Зеленый цвет кнопки */
+            color: white;
+            text-align: center;
+            border-radius: 5px;
+            text-decoration: none;
+            font-weight: bold;
+        }
+        .create-button:hover {
+            background-color: #45a049; /* Более темный зеленый при наведении */
+        }
+
+        /* Логотип */
+        .logo {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            font-size: 28px; /* Увеличенный размер шрифта */
+            font-weight: bold;
+            text-decoration: none; /* Убираем подчеркивание для ссылки */
+            display: flex;
+            align-items: baseline; /* Выравнивание по базовой линии */
+            gap: 5px; /* Пробел между словами */
+        }
+        .logo span:first-child {
+            color: #4CAF50; /* Первое слово - зеленый цвет */
+            transition: color 0.3s ease; /* Плавный переход цвета */
+        }
+        .logo span:last-child {
+            color: #a8e6cf; /* Второе слово - светло-зеленый */
+            transition: color 0.3s ease; /* Плавный переход цвета */
+        }
+        /* Эффект при наведении: цвета меняются местами */
+        .logo:hover span:first-child {
+            color: #a8e6cf; /* Первое слово становится светло-зеленым */
+        }
+        .logo:hover span:last-child {
+            color: #4CAF50; /* Второе слово становится зеленым */
+        }
+    </style>
+</head>
+<body>
+
+<!-- Логотип-ссылка -->
+<a th:href="@{/}" class="logo">
+    <span>Library</span> <span>Service</span>
+</a>
+
+<div class="container">
+    <h1>All People</h1>
+
+    <div class="person-list">
+        <div class="person-card" th:each="person : ${people}">
+            <a th:href="@{/people/{id}(id=${person.getId()})}"
+               th:text="${person.getName() + ', ' + person.getAge()}">User</a>
+        </div>
+    </div>
+
+    <hr/>
+
+    <a href="/people/new" class="create-button">Create New Person</a>
+</div>
+
+</body>
+</html>

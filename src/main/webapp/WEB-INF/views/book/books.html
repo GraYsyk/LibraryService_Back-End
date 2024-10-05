@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>All Books</title>
+  <style>
+    body {
+      font-family: 'Arial', sans-serif;
+      background-color: #f0f8ff; /* Легкий синий фон */
+      margin: 0;
+      padding: 20px;
+    }
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+      background-color: #fff;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+    }
+    h1 {
+      text-align: center;
+      color: #1e3a8a; /* Глубокий синий заголовок */
+      font-size: 2.5em;
+      margin-bottom: 20px;
+    }
+    .books-list {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+    }
+    .books-card {
+      background-color: #e0f2ff; /* Легкий синий карточки */
+      padding: 15px;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.08);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      transition: transform 0.3s ease;
+    }
+    .books-card:hover {
+      transform: translateY(-5px); /* Эффект при наведении */
+    }
+    .books-card a {
+      font-size: 1.2em;
+      color: #1e40af; /* Темно-синий текст ссылки */
+      font-weight: bold;
+      text-decoration: none;
+      transition: color 0.3s ease;
+    }
+    .books-card a:hover {
+      color: #0ea5e9; /* Ярко-синий при наведении */
+    }
+    hr {
+      margin: 30px 0;
+      border: none;
+      border-top: 2px solid #ddd;
+    }
+    .create-button {
+      display: block;
+      width: 220px;
+      margin: 20px auto;
+      padding: 15px;
+      background-color: #1e40af; /* Темно-синий цвет кнопки */
+      color: white;
+      text-align: center;
+      border-radius: 8px;
+      font-weight: bold;
+      font-size: 1.2em;
+      text-decoration: none;
+      transition: background-color 0.3s ease;
+    }
+    .create-button:hover {
+      background-color: #0ea5e9; /* Ярко-синий при наведении */
+    }
+
+    /* Логотип */
+    .logo {
+      position: absolute;
+      top: 20px;
+      left: 20px;
+      font-size: 28px; /* Увеличенный размер шрифта */
+      font-weight: bold;
+      text-decoration: none;
+      display: flex;
+      align-items: baseline; /* Выравнивание по базовой линии */
+      gap: 5px; /* Пробел между словами */
+    }
+    .logo span:first-child {
+      color: #1e3a8a; /* Первое слово - глубокий синий */
+      transition: color 0.3s ease; /* Плавный переход цвета */
+    }
+    .logo span:last-child {
+      color: #add8e6; /* Второе слово - светло-синий */
+      transition: color 0.3s ease; /* Плавный переход цвета */
+    }
+    /* Эффект при наведении: цвета меняются местами */
+    .logo:hover span:first-child {
+      color: #add8e6; /* Первое слово становится светло-синим */
+    }
+    .logo:hover span:last-child {
+      color: #1e3a8a; /* Второе слово становится глубоким синим */
+    }
+  </style>
+</head>
+<body>
+
+<!-- Логотип-ссылка -->
+<a th:href="@{/}" class="logo">
+  <span>Library</span> <span>Service</span>
+</a>
+
+<div class="container">
+  <h1>All Books</h1>
+
+  <div class="books-list">
+    <!-- Перебор всех книг и вывод информации -->
+    <div class="books-card" th:each="book : ${book}">
+      <a th:href="@{/book/{id}(id=${book.id})}"
+         th:text="${book.title + ', ' + book.author + ', ' + book.year}">Book</a>
+    </div>
+  </div>
+
+  <hr/>
+
+  <a href="/book/new" class="create-button">Create New Book</a>
+</div>
+
+</body>
+</html>

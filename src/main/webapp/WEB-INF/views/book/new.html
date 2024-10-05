@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create New Book</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f8ff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            position: relative; /* Добавлено для позиционирования логотипа */
+        }
+
+        .container {
+            background-color: #fff;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            width: 400px;
+        }
+
+        h2 {
+            color: #333;
+            margin-bottom: 20px;
+            font-size: 2em;
+            text-align: center;
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+        }
+
+        label {
+            margin: 10px 0 5px;
+            font-size: 1.1em;
+        }
+
+        input[type="text"], input[type="number"] {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            font-size: 1em;
+        }
+
+        .error-message {
+            color: red;
+            font-size: 0.9em;
+            margin-bottom: 10px;
+        }
+
+        input[type="submit"] {
+            background-color: #0066cc;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            font-size: 1.1em;
+        }
+
+        input[type="submit"]:hover {
+            background-color: #004999;
+        }
+
+        /* Логотип */
+        .logo {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            font-size: 28px; /* Увеличенный размер шрифта */
+            font-weight: bold;
+            text-decoration: none;
+            display: flex;
+            align-items: baseline; /* Выравнивание по базовой линии */
+            gap: 5px; /* Пробел между словами */
+        }
+        .logo span:first-child {
+            color: #1e3a8a; /* Первое слово - глубокий синий */
+            transition: color 0.3s ease; /* Плавный переход цвета */
+        }
+        .logo span:last-child {
+            color: #add8e6; /* Второе слово - светло-синий */
+            transition: color 0.3s ease; /* Плавный переход цвета */
+        }
+        /* Эффект при наведении: цвета меняются местами */
+        .logo:hover span:first-child {
+            color: #add8e6; /* Первое слово становится светло-синим */
+        }
+        .logo:hover span:last-child {
+            color: #1e3a8a; /* Второе слово становится глубоким синим */
+        }
+    </style>
+</head>
+<body>
+
+<!-- Логотип-ссылка -->
+<a th:href="@{/}" class="logo">
+    <span>Library</span> <span>Service</span>
+</a>
+
+<div class="container">
+    <h2>Create New Book</h2>
+    <form th:action="@{/book}" th:object="${book}" method="post">
+
+        <label for="title">Title:</label>
+        <input type="text" id="title" th:field="*{title}" placeholder="Enter book title">
+        <div class="error-message" th:if="${#fields.hasErrors('title')}" th:errors="*{title}"></div>
+
+        <label for="author">Author:</label>
+        <input type="text" id="author" th:field="*{author}" placeholder="Enter book author">
+        <div class="error-message" th:if="${#fields.hasErrors('author')}" th:errors="*{author}"></div>
+
+        <label for="year">Year:</label>
+        <input type="number" id="year" th:field="*{year}" placeholder="Enter year of publication">
+        <div class="error-message" th:if="${#fields.hasErrors('year')}" th:errors="*{year}"></div>
+
+        <input type="submit" value="Create Book">
+    </form>
+</div>
+
+</body>
+</html>

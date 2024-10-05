@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Book Information</title>
+  <style>
+    body {
+      font-family: 'Arial', sans-serif;
+      background-color: #f0f8ff; /* Легкий синий фон */
+      margin: 0;
+      padding: 20px;
+      position: relative; /* Добавлено для позиционирования логотипа */
+    }
+    .container {
+      max-width: 700px;
+      margin: 0 auto;
+      background-color: #fff;
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+    }
+    h2 {
+      text-align: center;
+      color: #1e3a8a; /* Глубокий синий заголовок */
+      font-size: 2.2em;
+      margin-bottom: 20px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 30px;
+    }
+    table th, table td {
+      padding: 12px;
+      text-align: left;
+      font-size: 1.1em;
+    }
+    table th {
+      background-color: #1e40af; /* Темно-синий заголовок таблицы */
+      color: white;
+      border-bottom: 2px solid #ddd;
+    }
+    table td {
+      border-bottom: 1px solid #ddd;
+      background-color: #f0f8ff; /* Светло-синий для строк */
+    }
+    select {
+      padding: 10px;
+      font-size: 1em;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+      margin-top: 10px;
+    }
+    a, input[type="submit"] {
+      display: inline-block;
+      padding: 12px 25px;
+      margin: 10px 0;
+      text-decoration: none;
+      background-color: #1e40af; /* Темно-синий цвет кнопок */
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 1.1em;
+      transition: background-color 0.3s ease;
+    }
+    input[type="submit"] {
+      background-color: #f44336; /* Красный цвет для кнопки удаления */
+    }
+    a:hover, input[type="submit"]:hover {
+      background-color: #0ea5e9; /* Ярко-синий при наведении */
+    }
+    input[type="submit"]:hover {
+      background-color: #e41e1e; /* Ярко-красный при наведении на кнопку удаления */
+    }
+    form {
+      display: inline;
+    }
+
+    /* Логотип */
+    .logo {
+      position: absolute;
+      top: 20px;
+      left: 20px;
+      font-size: 28px; /* Увеличенный размер шрифта */
+      font-weight: bold;
+      text-decoration: none; /* Убираем подчеркивание для ссылки */
+      display: flex;
+      align-items: baseline; /* Выравнивание по базовой линии */
+      gap: 5px; /* Пробел между словами */
+    }
+    .logo span:first-child {
+      color: #1e3a8a; /* Первое слово - глубокий синий */
+      transition: color 0.3s ease; /* Плавный переход цвета */
+    }
+    .logo span:last-child {
+      color: #add8e6; /* Второе слово - светло-синий */
+      transition: color 0.3s ease; /* Плавный переход цвета */
+    }
+    /* Эффект при наведении: цвета меняются местами */
+    .logo:hover span:first-child {
+      color: #add8e6; /* Первое слово становится светло-синим */
+    }
+    .logo:hover span:last-child {
+      color: #1e3a8a; /* Второе слово становится глубоким синим */
+    }
+  </style>
+</head>
+<body>
+
+<!-- Логотип-ссылка -->
+<a th:href="@{/}" class="logo">
+  <span>Library</span> <span>Service</span>
+</a>
+
+<div class="container">
+  <h2>Book Information</h2>
+  <table>
+    <tr>
+      <th>Title</th>
+      <td th:text="${book.getTitle()}">Example Book Title</td>
+    </tr>
+    <tr>
+      <th>Author</th>
+      <td th:text="${book.getAuthor()}">John Doe</td>
+    </tr>
+    <tr>
+      <th>Year</th>
+      <td th:text="${book.getYear()}">2020</td>
+    </tr>
+    <tr>
+      <th>Owner</th>
+      <td>
+        <span th:text="${book.getPersonname() != null ? book.getPersonname() : 'No owner'}">No owner</span>
+        <form th:method="PATCH" th:action="@{/book/{id}(id=${book.getId()})}">
+          <select th:object="${person}" th:field="*{id}" id="person">
+            <option th:each="person : ${people}" th:value="${person.getId()}"
+                    th:text="${person.getName()}"></option>
+          </select>
+          <input type="submit" value="Update Owner">
+        </form>
+      </td>
+    </tr>
+  </table>
+
+  <a th:href="@{/book/{id}/edit(id=${book.getId()})}">Edit</a>
+
+  <form th:method="DELETE" th:action="@{/book/{id}(id=${book.getId()})}">
+    <input type="submit" value="Delete">
+  </form>
+</div>
+</body>
+</html>

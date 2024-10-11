@@ -1,59 +1,90 @@
 package net.grasenko.com.Config.DAO;
 
-import net.grasenko.com.Config.Util.BookMapper;
-import net.grasenko.com.Config.Util.BookPMapper;
 import net.grasenko.com.Config.models.Book;
-import net.grasenko.com.Config.models.Person;
-import org.springframework.jdbc.core.BeanPropertyRowMapper;
-import org.springframework.jdbc.core.JdbcTemplate;
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
 @Component
 public class BookDAO {
 
-    private final JdbcTemplate jdbcTemplate;
+    private final SessionFactory sessionFactory;
 
-    public BookDAO(JdbcTemplate jdbcTemplate) {
-        this.jdbcTemplate = jdbcTemplate;
+    public BookDAO(SessionFactory sessionFactory) {
+        this.sessionFactory = sessionFactory;
     }
+    //Read Methods
     ///////////////////////////////////////////////////////////////
 
+    @Transactional(readOnly = true)
     public List<Book> show() {
-        return jdbcTemplate.query("SELECT * FROM book", new BookPMapper());
+        Session session = sessionFactory.getCurrentSession();
+        List<Book> books = session.createQuery("from Book").getResultList();
+        return books;
     }
 
+    @Transactional(readOnly = true)
     public Book getBookById(int id) {
-        return jdbcTemplate.queryForObject("SELECT b.*, p.name AS personName FROM Book b LEFT JOIN Person p ON b.person_id = p.id WHERE b.id = ?",
-                new Object[]{id}, new BookMapper());
+        Session session = sessionFactory.getCurrentSession();
+        Book book = session.get(Book.class, id);
+        return book;
     }
 
+    //CUD Methods
     ///////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    public void updateOwner(int id, Person person) {
-        jdbcTemplate.update("UPDATE book SET person_id = ? WHERE id = ?", person.getId(), id);
+    @Transactional()
+    public void updateBook(int id, Book UpdateBook) {
+        Session session = sessionFactory.getCurrentSession();
+        Book book = session.get(Book.class, id);
+        book.setAuthor(UpdateBook.getAuthor());
+        book.setTitle(UpdateBook.getTitle());
+        book.setYear(UpdateBook.getYear());
+        session.update(book);
     }
 
-    public void updateBook(int id, Book book) {
-        jdbcTemplate.update("UPDATE book SET title = ?, author = ?, year = ? WHERE id = ?", book.getTitle(), book.getAuthor(), book.getYear(), id);
-    }
-
+    @Transactional()
     public void newBook(Book book) {
-        jdbcTemplate.update("INSERT INTO book (title, author, year) VALUES (?, ?, ?)", book.getTitle(), book.getAuthor(), book.getYear());
+        Session session = sessionFactory.getCurrentSession();
+        session.save(book);
     }
 
+    @Transactional()
     public void delete(int id){
-        jdbcTemplate.update("DELETE FROM Book WHERE id=?", id);
+        Session session = sessionFactory.getCurrentSession();
+        Book book = session.get(Book.class, id);
+        session.delete(book);
     }
 
+    //Side Methods
     ///////////////////////////////////////////////////////////////////
 
-    public List<Book> getPersonBooks(int id) {
-        return jdbcTemplate.query("SELECT * FROM book WHERE person_id = ?", new Object[]{id}, new BookPMapper());
+    @Transactional()
+    public void updateOwner(int id, int PersonId) {
+        Session session = sessionFactory.getCurrentSession();
+
+        String hql = "UPDATE Book SET person.id = :personId WHERE id = :id";
+
+        session.createQuery(hql)
+                .setParameter("personId", PersonId)
+                .setParameter("id", id)
+                .executeUpdate();
+
     }
 
+    @Transactional
     public void returnBook(int personId, int bookId) {
-        jdbcTemplate.update("UPDATE book SET person_id = ? WHERE id = ?", null, bookId);
+        Session session = sessionFactory.getCurrentSession();
+
+        String hql = "UPDATE Book SET person = null WHERE id = :bookId AND person.id = :personId";
+
+        session.createQuery(hql)
+                .setParameter("bookId", bookId)
+                .setParameter("personId", personId)
+                .executeUpdate();
     }
+
 }

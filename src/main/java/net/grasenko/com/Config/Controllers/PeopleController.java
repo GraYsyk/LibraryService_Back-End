@@ -38,7 +38,7 @@ public class PeopleController {
     @GetMapping("/{id}")
     public String show(@PathVariable("id") int id, Model model) throws SQLException {
         model.addAttribute("person", personDAO.getPerson(id));
-        model.addAttribute("books", bookDAO.getPersonBooks(id));
+        model.addAttribute("books", personDAO.getPersonBooks(id));
         return "people/show";
     }
 

@@ -80,7 +80,7 @@ public class BooksController {
     //Update book owner mapper
     @PatchMapping("/{id}")
     public String updateBookOwner(@PathVariable("id") int id, Model model, @ModelAttribute("person") Person person) {
-        bookDAO.updateOwner(id, person);
+        bookDAO.updateOwner(id, person.getId());
         return "redirect:/book/" + id;
     }
 

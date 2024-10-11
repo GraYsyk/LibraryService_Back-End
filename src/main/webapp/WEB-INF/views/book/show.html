@@ -132,7 +132,7 @@
     <tr>
       <th>Owner</th>
       <td>
-        <span th:text="${book.getPersonname() != null ? book.getPersonname() : 'No owner'}">No owner</span>
+        <span th:text="${book.getPerson_id() != null ? book.getPerson_id().getName() : 'No owner'}">No owner</span>
         <form th:method="PATCH" th:action="@{/book/{id}(id=${book.getId()})}">
           <select th:object="${person}" th:field="*{id}" id="person">
             <option th:each="person : ${people}" th:value="${person.getId()}"

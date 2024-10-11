@@ -1,24 +1,32 @@
 package net.grasenko.com.Config.models;
 
+import jakarta.persistence.*;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotEmpty;
 
+@Entity
 public class Book {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
     private int id;// book ID
 
     @NotEmpty(message = "Book Title should not be empty")
+    @Column(name = "title")
     private String title;    // book name
 
     @NotEmpty(message = "If book does not have an author, please write 'Unknown Author' ")
+    @Column(name = "author")
     private String author;      // Autor - can be zero if Unknown
 
     @Min(value = 1800, message = "We dont have books old like that..")
+    @Column(name = "year")
     private int year;           // Year
 
-    private Integer person_id; // Owner Id (Can be null)
-
-    private String personname;   // Owner Id (Can be null)
+    @ManyToOne
+    @JoinColumn(name = "person_id", referencedColumnName = "id")
+    private Person person; // Owner Id (Can be null)
 
     /////////////////////////////////////////////////////////////////////////////
 
@@ -31,18 +39,11 @@ public class Book {
         this.year = year;
     }
 
-    public Book(int person_id, int year, String author, String title) {
-        this.person_id = person_id;
+    public Book(Person person, int year, String author, String title) {
+        this.person = person;
         this.year = year;
         this.author = author;
         this.title = title;
-    }
-
-    public Book(String title, String author, int year, String personname) {
-        this.title = title;
-        this.author = author;
-        this.year = year;
-        this.personname = personname;
     }
 
     //////////////////////////////////////////////////////////////////////////////
@@ -79,19 +80,11 @@ public class Book {
         this.year = year;
     }
 
-    public int getPerson_id() {
-        return person_id;
+    public Person getPerson_id() {
+        return person;
     }
 
-    public void setPerson_id(int person_id) {
-        this.person_id = person_id;
-    }
-
-    public String getPersonname() {
-        return personname;
-    }
-
-    public void setPersonname(String person) {
-        this.personname = person;
+    public void setPerson_id(Person person) {
+        this.person = person;
     }
 }

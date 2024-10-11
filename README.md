@@ -43,10 +43,9 @@ Not a complex site created by me to strengthen the level of web application crea
 ***
 # BACK-END
 
-In general, concerning the server part of the project everything was quite simple, in the project files you will find the file **databaseproperties.origin** that will show you how to correctly set the values for connecting to the database.
+In general, concerning the server part of the project everything was quite simple, in the project files you will find the file **Hibernate.properies.origin** that will show you how to correctly set the values for connecting to the database.
 
-![image](https://github.com/user-attachments/assets/e5f8ee82-094a-4438-98e4-da07c3aa9f8a)
-
+![image](https://github.com/user-attachments/assets/706e11a9-cd08-4cbb-9e39-d925ce1ed896)
 
 Each class tried to clean and complete as much as possible. There are also comments that explain the functionality of each method.
 

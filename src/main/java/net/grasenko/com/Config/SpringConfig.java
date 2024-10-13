@@ -103,7 +103,6 @@ public class SpringConfig implements WebMvcConfigurer {
         return transactionManager;
     }
 
-
     @Override
     public void configureViewResolvers(ViewResolverRegistry registry) {
         ThymeleafViewResolver resolver = new ThymeleafViewResolver();

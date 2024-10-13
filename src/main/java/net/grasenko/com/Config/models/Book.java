@@ -4,6 +4,8 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotEmpty;
 
+import java.util.Date;
+
 @Entity
 public class Book {
 
@@ -22,7 +24,11 @@ public class Book {
 
     @Min(value = 1800, message = "We dont have books old like that..")
     @Column(name = "year")
-    private int year;           // Year
+    private int year;  // Year
+
+    @Column(name = "taken_at")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date taken_at;
 
     @ManyToOne
     @JoinColumn(name = "person_id", referencedColumnName = "id")
@@ -80,11 +86,15 @@ public class Book {
         this.year = year;
     }
 
-    public Person getPerson_id() {
+    public Date getTaken_at() {return taken_at;}
+
+    public void setTaken_at(Date taken_at) {this.taken_at = taken_at;}
+
+    public Person getPerson() {
         return person;
     }
 
-    public void setPerson_id(Person person) {
+    public void setPerson(Person person) {
         this.person = person;
     }
 }

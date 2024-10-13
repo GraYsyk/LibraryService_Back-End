@@ -1,10 +1,15 @@
 package net.grasenko.com.Config.Controllers;
 
 import jakarta.validation.Valid;
-import net.grasenko.com.Config.DAO.BookDAO;
-import net.grasenko.com.Config.DAO.PersonDAO;
+
+import net.grasenko.com.Config.Services.BookService;
+import net.grasenko.com.Config.Services.PeopleService;
 import net.grasenko.com.Config.models.Person;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -16,29 +21,47 @@ import java.sql.SQLException;
 @RequestMapping("/people")
 public class PeopleController {
 
-    private final BookDAO bookDAO;
-    private PersonDAO personDAO;
+    private final PeopleService peopleService;
+
+    private final BookService bookService;
 
     @Autowired
-    public PeopleController(PersonDAO personDAO, BookDAO bookDAO) {
-        this.personDAO = personDAO;
-        this.bookDAO = bookDAO;
+    public PeopleController(PeopleService peopleService, BookService bookService) {
+        this.peopleService = peopleService;
+        this.bookService = bookService;
     }
+
 
     //Get Mapping /////////////////////////////////////////////////////
 
     //Default Person list getter
     @GetMapping()
-    public String index(Model model) throws Exception {
-        model.addAttribute("people", personDAO.show());
+    public String index(@RequestParam(name = "page", defaultValue = "0") int page,
+                        @RequestParam(name = "size", defaultValue = "10") int size,
+                        @RequestParam(name = "sort", defaultValue = "false") boolean sort,
+                        @RequestParam(name = "direction", defaultValue = "ASC") String direction,
+                        @RequestParam(name = "search", required = false) String search,
+                        Model model) throws Exception {
+        Sort sortOrder = sort ? Sort.by(Sort.Direction.fromString(direction), "age") : Sort.unsorted();
+
+        Pageable pageable = PageRequest.of(page, size, sortOrder);
+
+        Page<Person> personPage;
+        if (search != null && !search.isEmpty()) {
+            personPage = peopleService.findByFirstName(search, pageable);
+        } else {
+            personPage = peopleService.findAll(pageable);
+        }
+
+        model.addAttribute("people", personPage);
         return "people/index";
     }
 
     //Person viewer/getter
     @GetMapping("/{id}")
     public String show(@PathVariable("id") int id, Model model) throws SQLException {
-        model.addAttribute("person", personDAO.getPerson(id));
-        model.addAttribute("books", personDAO.getPersonBooks(id));
+        model.addAttribute("person", peopleService.findById(id));
+        model.addAttribute("books", bookService.findByPerson_id(id));
         return "people/show";
     }
 
@@ -52,7 +75,7 @@ public class PeopleController {
     //Person editor
     @GetMapping("/{id}/edit")
     public String edit(@PathVariable("id") int id, Model model) throws SQLException {
-        model.addAttribute("person", personDAO.getPerson(id));
+        model.addAttribute("person", peopleService.findById(id));
         return "people/edit";
     }
 
@@ -61,7 +84,7 @@ public class PeopleController {
     //Patch mapping to free book
     @PatchMapping("/{id}/delete")
     public String deleteBook(@PathVariable("id") int id, @RequestParam("bookid") int bookId) {
-        bookDAO.returnBook(id, bookId);
+        bookService.returnBook(id, bookId);
 
         return "redirect:/people/" + id;
     }
@@ -76,7 +99,7 @@ public class PeopleController {
             return "people/edit";
         }
 
-        personDAO.update(id,person);
+        peopleService.update(id,person);
         return "redirect:/people";
     }
 
@@ -91,7 +114,7 @@ public class PeopleController {
             return "people/new";
         }
 
-        personDAO.savePerson(person);
+        peopleService.save(person);
         return "redirect:/people";
     }
 
@@ -100,7 +123,7 @@ public class PeopleController {
     //Delete person by ID
     @DeleteMapping("/{id}")
     public String delete(@PathVariable("id") int id) throws SQLException {
-        personDAO.deletePerson(id);
+        peopleService.delete(id);
         return "redirect:/people";
     }
 }

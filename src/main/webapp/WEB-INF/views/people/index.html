@@ -1,23 +1,29 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://thymeleaf.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>All People</title>
     <style>
         body {
             font-family: Arial, sans-serif;
-            background-color: #f4f4f4; /* Легкий серый фон */
+            background-color: #f4f4f4; /* Светло-серый фон */
             margin: 0;
             padding: 20px;
-            position: relative; /* Добавлено для позиционирования логотипа */
         }
         .container {
-            max-width: 800px;
+            max-width: 900px;
             margin: 0 auto;
+            background-color: #fff; /* Белый цвет контейнера */
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
         }
         h1 {
             text-align: center;
-            color: #333;
+            color: #4CAF50; /* Зеленый цвет заголовка */
+            font-size: 2.5em;
+            margin-bottom: 20px;
         }
         .person-list {
             display: flex;
@@ -25,70 +31,136 @@
             gap: 15px;
         }
         .person-card {
-            background-color: #fff;
-            padding: 20px;
+            background-color: #e8f5e9; /* Светло-зеленый цвет карточки */
+            padding: 15px;
             border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.08);
             display: flex;
             justify-content: space-between;
             align-items: center;
-        }
-        .person-card a {
-            font-size: 18px;
+            transition: transform 0.3s ease;
             text-decoration: none;
-            color: #333;
-            font-weight: bold;
+            color: inherit;
         }
-        .person-card a:hover {
-            color: #4CAF50; /* Зеленый цвет при наведении */
+        .person-card:hover {
+            transform: translateY(-5px);
+            background-color: #c8e6c9; /* Более темный зеленый при наведении */
+        }
+        .person-info {
+            font-size: 1.2em;
+            font-weight: bold;
+            color: #2e7d32; /* Темно-зеленый цвет текста */
         }
         hr {
-            margin: 20px 0;
+            margin: 30px 0;
             border: none;
             border-top: 2px solid #ddd;
         }
         .create-button {
             display: block;
-            width: 200px;
-            margin: 0 auto;
-            padding: 10px;
-            background-color: #4CAF50; /* Зеленый цвет кнопки */
+            width: 220px;
+            margin: 20px auto;
+            padding: 15px;
+            background-color: #4CAF50; /* Зеленый цвет кнопки создания */
             color: white;
             text-align: center;
-            border-radius: 5px;
-            text-decoration: none;
+            border-radius: 8px;
             font-weight: bold;
+            font-size: 1.2em;
+            text-decoration: none;
+            transition: background-color 0.3s ease;
         }
         .create-button:hover {
-            background-color: #45a049; /* Более темный зеленый при наведении */
+            background-color: #388e3c; /* Темно-зеленый при наведении */
         }
-
-        /* Логотип */
+        .sort-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        .sort-button {
+            padding: 10px 20px;
+            background-color: #4CAF50; /* Зеленый цвет кнопок сортировки */
+            color: white;
+            border-radius: 8px;
+            font-weight: bold;
+            text-decoration: none;
+            transition: background-color 0.3s ease;
+        }
+        .sort-button:hover {
+            background-color: #388e3c; /* Темно-зеленый при наведении */
+        }
+        .pagination {
+            text-align: center;
+            margin-top: 20px;
+        }
+        .pagination a {
+            display: inline-block;
+            margin: 0 5px;
+            padding: 10px 15px;
+            background-color: #4CAF50; /* Зеленый цвет для кнопок пагинации */
+            color: white;
+            border-radius: 5px;
+            text-decoration: none;
+            transition: background-color 0.3s ease;
+        }
+        .pagination a:hover {
+            background-color: #388e3c; /* Темно-зеленый при наведении */
+        }
+        .pagination .current {
+            background-color: #388e3c; /* Цвет текущей страницы */
+            cursor: default;
+        }
         .logo {
             position: absolute;
             top: 20px;
             left: 20px;
-            font-size: 28px; /* Увеличенный размер шрифта */
+            font-size: 28px;
             font-weight: bold;
-            text-decoration: none; /* Убираем подчеркивание для ссылки */
+            text-decoration: none;
             display: flex;
-            align-items: baseline; /* Выравнивание по базовой линии */
-            gap: 5px; /* Пробел между словами */
+            align-items: baseline;
+            gap: 5px;
         }
         .logo span:first-child {
-            color: #4CAF50; /* Первое слово - зеленый цвет */
-            transition: color 0.3s ease; /* Плавный переход цвета */
+            color: #4CAF50; /* Зеленый цвет первого слова */
+            transition: color 0.3s ease;
         }
         .logo span:last-child {
-            color: #a8e6cf; /* Второе слово - светло-зеленый */
-            transition: color 0.3s ease; /* Плавный переход цвета */
+            color: #a8e6cf; /* Светло-зеленый цвет второго слова */
+            transition: color 0.3s ease;
         }
-        /* Эффект при наведении: цвета меняются местами */
         .logo:hover span:first-child {
-            color: #a8e6cf; /* Первое слово становится светло-зеленым */
+            color: #a8e6cf; /* Светло-зеленый при наведении */
         }
         .logo:hover span:last-child {
-            color: #4CAF50; /* Второе слово становится зеленым */
+            color: #4CAF50; /* Зеленый при наведении */
+        }
+        .search-bar {
+            display: flex; /* Flexbox для выравнивания поля ввода и кнопки */
+            justify-content: center; /* Центрирование */
+            margin-bottom: 20px;
+        }
+        .search-bar input {
+            padding: 10px;
+            width: 60%; /* Ширина поля ввода */
+            border-radius: 5px;
+            border: 1px solid #ccc;
+        }
+        .search-bar button {
+            padding: 10px 20px;
+            background-color: #4CAF50; /* Зеленый цвет кнопки поиска */
+            color: white;
+            border-radius: 5px;
+            font-weight: bold;
+            cursor: pointer;
+            border: none;
+            transition: background-color 0.3s ease;
+            margin-left: 5px; /* Пробел между полем ввода и кнопкой */
+        }
+        .search-bar button:hover {
+            background-color: #388e3c; /* Темно-зеленый при наведении */
         }
     </style>
 </head>
@@ -102,14 +174,36 @@
 <div class="container">
     <h1>All People</h1>
 
+    <!-- Поисковая строка и кнопка Search -->
+    <form th:action="@{/people}" method="get" style="text-align: center; margin-bottom: 20px;">
+        <input type="text" name="search" placeholder="Search by title" th:value="${param.search}" style="padding: 10px; width: 60%; border-radius: 5px; border: 1px solid #ccc;">
+        <button type="submit" style="padding: 10px 20px; background-color: #4CAF50; color: white; border-radius: 5px; font-weight: bold; cursor: pointer; border: none;">Search</button>
+    </form>
+
+    <!-- Кнопки для сортировки -->
+    <div class="sort-buttons">
+        <a th:href="@{/people(page=${people.number}, size=${people.size}, sort=true, direction='ASC', search=${param.search})}" class="sort-button">Sort by Age &uarr;</a>
+        <a th:href="@{/people(page=${people.number}, size=${people.size}, sort=true, direction='DESC', search=${param.search})}" class="sort-button">Sort by Age &darr;</a>
+    </div>
+
     <div class="person-list">
-        <div class="person-card" th:each="person : ${people}">
-            <a th:href="@{/people/{id}(id=${person.getId()})}"
-               th:text="${person.getName() + ', ' + person.getAge()}">User</a>
-        </div>
+        <a th:each="person : ${people.content}" th:href="@{/people/{id}(id=${person.id})}" class="person-card">
+            <span class="person-info" th:text="${person.name + ', ' + person.age}">Person Info</span>
+        </a>
     </div>
 
     <hr/>
+
+    <!-- Пагинация -->
+    <div class="pagination">
+        <a th:href="@{/people(page=${people.number - 1}, size=${people.size}, search=${param.search})}" th:if="${people.hasPrevious()}" class="prev">Previous</a>
+        <span th:each="pageNum : ${#numbers.sequence(0, people.totalPages - 1)}">
+            <a th:href="@{/people(page=${pageNum}, size=${people.size}, search=${param.search})}"
+               th:text="${pageNum + 1}"
+               th:classappend="${pageNum == people.number} ? 'current' : ''"></a>
+        </span>
+        <a th:href="@{/people(page=${people.number + 1}, size=${people.size}, search=${param.search})}" th:if="${people.hasNext()}" class="next">Next</a>
+    </div>
 
     <a href="/people/new" class="create-button">Create New Person</a>
 </div>

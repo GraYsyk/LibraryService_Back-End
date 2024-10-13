@@ -7,7 +7,7 @@
   <style>
     body {
       font-family: 'Arial', sans-serif;
-      background-color: #f0f8ff; /* Легкий синий фон */
+      background-color: #f0f8ff;
       margin: 0;
       padding: 20px;
     }
@@ -21,7 +21,7 @@
     }
     h1 {
       text-align: center;
-      color: #1e3a8a; /* Глубокий синий заголовок */
+      color: #1e3a8a;
       font-size: 2.5em;
       margin-bottom: 20px;
     }
@@ -31,7 +31,7 @@
       gap: 15px;
     }
     .books-card {
-      background-color: #e0f2ff; /* Легкий синий карточки */
+      background-color: #e0f2ff;
       padding: 15px;
       border-radius: 8px;
       box-shadow: 0 0 10px rgba(0, 0, 0, 0.08);
@@ -39,19 +39,20 @@
       justify-content: space-between;
       align-items: center;
       transition: transform 0.3s ease;
+      text-decoration: none;
+      color: inherit;
     }
     .books-card:hover {
-      transform: translateY(-5px); /* Эффект при наведении */
+      transform: translateY(-5px);
     }
-    .books-card a {
+    .book-info {
       font-size: 1.2em;
-      color: #1e40af; /* Темно-синий текст ссылки */
       font-weight: bold;
-      text-decoration: none;
-      transition: color 0.3s ease;
+      color: #1e40af;
     }
-    .books-card a:hover {
-      color: #0ea5e9; /* Ярко-синий при наведении */
+    .book-owner {
+      font-size: 1em;
+      color: #333;
     }
     hr {
       margin: 30px 0;
@@ -63,7 +64,7 @@
       width: 220px;
       margin: 20px auto;
       padding: 15px;
-      background-color: #1e40af; /* Темно-синий цвет кнопки */
+      background-color: #1e40af;
       color: white;
       text-align: center;
       border-radius: 8px;
@@ -73,35 +74,71 @@
       transition: background-color 0.3s ease;
     }
     .create-button:hover {
-      background-color: #0ea5e9; /* Ярко-синий при наведении */
+      background-color: #0ea5e9;
     }
-
-    /* Логотип */
+    .sort-buttons {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+    .sort-button {
+      padding: 10px 20px;
+      background-color: #1e40af;
+      color: white;
+      border-radius: 8px;
+      font-weight: bold;
+      text-decoration: none;
+      transition: background-color 0.3s ease;
+    }
+    .sort-button:hover {
+      background-color: #0ea5e9;
+    }
+    .pagination {
+      text-align: center;
+      margin-top: 20px;
+    }
+    .pagination a {
+      display: inline-block;
+      margin: 0 5px;
+      padding: 10px 15px;
+      background-color: #1e40af;
+      color: white;
+      border-radius: 5px;
+      text-decoration: none;
+      transition: background-color 0.3s ease;
+    }
+    .pagination a:hover {
+      background-color: #0ea5e9;
+    }
+    .pagination .current {
+      background-color: #0ea5e9;
+      cursor: default;
+    }
     .logo {
       position: absolute;
       top: 20px;
       left: 20px;
-      font-size: 28px; /* Увеличенный размер шрифта */
+      font-size: 28px;
       font-weight: bold;
       text-decoration: none;
       display: flex;
-      align-items: baseline; /* Выравнивание по базовой линии */
-      gap: 5px; /* Пробел между словами */
+      align-items: baseline;
+      gap: 5px;
     }
     .logo span:first-child {
-      color: #1e3a8a; /* Первое слово - глубокий синий */
-      transition: color 0.3s ease; /* Плавный переход цвета */
+      color: #1e3a8a;
+      transition: color 0.3s ease;
     }
     .logo span:last-child {
-      color: #add8e6; /* Второе слово - светло-синий */
-      transition: color 0.3s ease; /* Плавный переход цвета */
+      color: #add8e6;
+      transition: color 0.3s ease;
     }
-    /* Эффект при наведении: цвета меняются местами */
     .logo:hover span:first-child {
-      color: #add8e6; /* Первое слово становится светло-синим */
+      color: #add8e6;
     }
     .logo:hover span:last-child {
-      color: #1e3a8a; /* Второе слово становится глубоким синим */
+      color: #1e3a8a;
     }
   </style>
 </head>
@@ -115,15 +152,39 @@
 <div class="container">
   <h1>All Books</h1>
 
+  <!-- Поисковая строка и кнопка Search -->
+  <form th:action="@{/book}" method="get" style="text-align: center; margin-bottom: 20px;">
+    <input type="text" name="search" placeholder="Search by title" th:value="${param.search}" style="padding: 10px; width: 60%; border-radius: 5px; border: 1px solid #ccc;">
+    <button type="submit" style="padding: 10px 20px; background-color: #1e40af; color: white; border-radius: 5px; font-weight: bold; cursor: pointer; border: none;">Search</button>
+  </form>
+
+  <!-- Кнопки для сортировки -->
+  <div class="sort-buttons">
+    <a th:href="@{/book(page=${books.number}, size=${books.size}, sort=true, direction='ASC', search=${param.search})}" class="sort-button">Sort by Year &uarr;</a>
+    <a th:href="@{/book(page=${books.number}, size=${books.size}, sort=true, direction='DESC', search=${param.search})}" class="sort-button">Sort by Year &darr;</a>
+  </div>
+
   <div class="books-list">
-    <!-- Перебор всех книг и вывод информации -->
-    <div class="books-card" th:each="book : ${book}">
-      <a th:href="@{/book/{id}(id=${book.id})}"
-         th:text="${book.title + ', ' + book.author + ', ' + book.year}">Book</a>
-    </div>
+    <a th:each="book : ${books.content}" th:href="@{/book/{id}(id=${book.id})}" class="books-card">
+      <span class="book-info" th:text="${book.title + ', ' + book.author + ', ' + book.year}">Book Info</span>
+      <span class="book-owner" th:text="${book.person != null ? book.person.name : 'No Owner'}">Owner</span>
+    </a>
   </div>
 
   <hr/>
+
+  <!-- Пагинация -->
+  <div class="pagination">
+    <a th:href="@{/book(page=${books.number - 1}, size=${books.size}, search=${param.search})}"
+       th:if="${books.hasPrevious()}" class="prev">Previous</a>
+    <span th:each="pageNum : ${#numbers.sequence(0, books.totalPages - 1)}">
+      <a th:href="@{/book(page=${pageNum}, size=${books.size}, search=${param.search})}"
+         th:text="${pageNum + 1}"
+         th:classappend="${pageNum == books.number} ? 'current' : ''"></a>
+    </span>
+    <a th:href="@{/book(page=${books.number + 1}, size=${books.size}, search=${param.search})}"
+       th:if="${books.hasNext()}" class="next">Next</a>
+  </div>
 
   <a href="/book/new" class="create-button">Create New Book</a>
 </div>

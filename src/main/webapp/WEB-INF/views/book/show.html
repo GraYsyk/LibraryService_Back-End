@@ -7,10 +7,10 @@
   <style>
     body {
       font-family: 'Arial', sans-serif;
-      background-color: #f0f8ff; /* Легкий синий фон */
+      background-color: #f0f8ff;
       margin: 0;
       padding: 20px;
-      position: relative; /* Добавлено для позиционирования логотипа */
+      position: relative;
     }
     .container {
       max-width: 700px;
@@ -22,7 +22,7 @@
     }
     h2 {
       text-align: center;
-      color: #1e3a8a; /* Глубокий синий заголовок */
+      color: #1e3a8a;
       font-size: 2.2em;
       margin-bottom: 20px;
     }
@@ -37,13 +37,13 @@
       font-size: 1.1em;
     }
     table th {
-      background-color: #1e40af; /* Темно-синий заголовок таблицы */
+      background-color: #1e40af;
       color: white;
       border-bottom: 2px solid #ddd;
     }
     table td {
       border-bottom: 1px solid #ddd;
-      background-color: #f0f8ff; /* Светло-синий для строк */
+      background-color: #f0f8ff;
     }
     select {
       padding: 10px;
@@ -57,7 +57,7 @@
       padding: 12px 25px;
       margin: 10px 0;
       text-decoration: none;
-      background-color: #1e40af; /* Темно-синий цвет кнопок */
+      background-color: #1e40af;
       color: white;
       border: none;
       border-radius: 6px;
@@ -66,44 +66,44 @@
       transition: background-color 0.3s ease;
     }
     input[type="submit"] {
-      background-color: #f44336; /* Красный цвет для кнопки удаления */
+      background-color: #f44336;
     }
     a:hover, input[type="submit"]:hover {
-      background-color: #0ea5e9; /* Ярко-синий при наведении */
+      background-color: #0ea5e9;
     }
     input[type="submit"]:hover {
-      background-color: #e41e1e; /* Ярко-красный при наведении на кнопку удаления */
+      background-color: #e41e1e;
     }
     form {
       display: inline;
     }
-
-    /* Логотип */
+    .overdue {
+      color: red;
+    }
     .logo {
       position: absolute;
       top: 20px;
       left: 20px;
-      font-size: 28px; /* Увеличенный размер шрифта */
+      font-size: 28px;
       font-weight: bold;
-      text-decoration: none; /* Убираем подчеркивание для ссылки */
+      text-decoration: none;
       display: flex;
-      align-items: baseline; /* Выравнивание по базовой линии */
-      gap: 5px; /* Пробел между словами */
+      align-items: baseline;
+      gap: 5px;
     }
     .logo span:first-child {
-      color: #1e3a8a; /* Первое слово - глубокий синий */
-      transition: color 0.3s ease; /* Плавный переход цвета */
+      color: #1e3a8a;
+      transition: color 0.3s ease;
     }
     .logo span:last-child {
-      color: #add8e6; /* Второе слово - светло-синий */
-      transition: color 0.3s ease; /* Плавный переход цвета */
+      color: #add8e6;
+      transition: color 0.3s ease;
     }
-    /* Эффект при наведении: цвета меняются местами */
     .logo:hover span:first-child {
-      color: #add8e6; /* Первое слово становится светло-синим */
+      color: #add8e6;
     }
     .logo:hover span:last-child {
-      color: #1e3a8a; /* Второе слово становится глубоким синим */
+      color: #1e3a8a;
     }
   </style>
 </head>
@@ -132,7 +132,10 @@
     <tr>
       <th>Owner</th>
       <td>
-        <span th:text="${book.getPerson_id() != null ? book.getPerson_id().getName() : 'No owner'}">No owner</span>
+        <span th:classappend="${overdue > 0 ? 'overdue' : ''}" th:text="${book.getPerson() != null ? book.getPerson().getName() : 'No owner'}">No owner</span>
+        <div th:if="${overdue > 0}">
+          <small th:text="'User has overdue by ' + ${overdue} + ' days.'"></small>
+        </div>
         <form th:method="PATCH" th:action="@{/book/{id}(id=${book.getId()})}">
           <select th:object="${person}" th:field="*{id}" id="person">
             <option th:each="person : ${people}" th:value="${person.getId()}"

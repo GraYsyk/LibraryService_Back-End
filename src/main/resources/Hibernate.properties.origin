@@ -1,0 +1,11 @@
+# Data base coonect configuration (Data source)
+hibernate.driver_class=
+hibernate.connection.url=
+hibernate.connection.username=
+hibernate.connection.password=
+
+# Hibernate config
+
+hibernate.show_sql=true
+hibernate.dialect=org.hibernate.dialect.PostgreSQLDialect
+hibernate.current_session_context_class=thread

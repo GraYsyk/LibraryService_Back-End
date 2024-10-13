@@ -1,11 +1,15 @@
 package net.grasenko.com.Config.Controllers;
 
 import jakarta.validation.Valid;
-import net.grasenko.com.Config.DAO.BookDAO;
-import net.grasenko.com.Config.DAO.PersonDAO;
+import net.grasenko.com.Config.Services.BookService;
+import net.grasenko.com.Config.Services.PeopleService;
 import net.grasenko.com.Config.models.Book;
 import net.grasenko.com.Config.models.Person;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -24,31 +28,52 @@ import java.sql.SQLException;
 @RequestMapping("/book")
 public class BooksController {
 
-    private final BookDAO bookDAO;
+    private final BookService bookService;
 
-    private final PersonDAO personDAO;
+    private final PeopleService peopleService;
 
     @Autowired
-    public BooksController(BookDAO bookDAO, PersonDAO personDAO) {
-        this.bookDAO = bookDAO;
-        this.personDAO = personDAO;
+    public BooksController(BookService bookService, PeopleService peopleService) {
+        this.bookService = bookService;
+        this.peopleService = peopleService;
     }
 
     ////////////////////////////////////////////////////////////////////////////////
 
     //Get mapper for default Book list
     @GetMapping()
-    public String book(Model model) {
-        model.addAttribute("book", bookDAO.show());
+    public String book(@RequestParam(name = "page", defaultValue = "0") int page,
+                       @RequestParam(name = "size", defaultValue = "10") int size,
+                       @RequestParam(name = "sort", defaultValue = "false") boolean sort,
+                       @RequestParam(name = "direction", defaultValue = "ASC") String direction,
+                       @RequestParam(name = "search", required = false) String search,
+                       Model model) {
+        Sort sortOrder = sort ? Sort.by(Sort.Direction.fromString(direction), "year") : Sort.unsorted();
+
+        Pageable pageable = PageRequest.of(page, size, sortOrder);
+
+        Page<Book> booksPage;
+        if (search != null && !search.isEmpty()) {
+            booksPage = bookService.findByTitle(search, pageable);
+        } else {
+            booksPage = bookService.findAll(pageable);
+        }
+
+        // Добавляем результат в модель
+        model.addAttribute("books", booksPage);
         return "book/books";
     }
 
     //Geting specific book by id
     @GetMapping("/{id}")
     public String book(@PathVariable("id") int id, Model model, @ModelAttribute("person") Person person) {
-     model.addAttribute("book", bookDAO.getBookById(id));
-     model.addAttribute("people", personDAO.show());
-     return "book/show";
+        Book book = bookService.findById(id);
+        int overdue = bookService.overdueCheck(book);
+        model.addAttribute("overdue", overdue); // Добавляем значение просрочки в модель
+
+        model.addAttribute("book", book);
+        model.addAttribute("people", peopleService.findAll());
+        return "book/show";
     }
 
     //New book creator mapping
@@ -61,7 +86,7 @@ public class BooksController {
     //Book editor mapping
     @GetMapping("/{id}/edit")
     public String editBook(@PathVariable("id") int id, Model model) {
-        model.addAttribute("book", bookDAO.getBookById(id));
+        model.addAttribute("book", bookService.findById(id));
         return "book/edit";
     }
 
@@ -73,14 +98,14 @@ public class BooksController {
         if (bindingResult.hasErrors()) {
             return "book/edit";
         }
-        bookDAO.updateBook(id, book);
+        bookService.update(id, book);
         return "redirect:/book/" + id;
     }
 
     //Update book owner mapper
     @PatchMapping("/{id}")
     public String updateBookOwner(@PathVariable("id") int id, Model model, @ModelAttribute("person") Person person) {
-        bookDAO.updateOwner(id, person.getId());
+        bookService.updateOwner(id, person.getId());
         return "redirect:/book/" + id;
     }
 
@@ -94,7 +119,7 @@ public class BooksController {
             return "book/new";
         }
 
-        bookDAO.newBook(book);
+        bookService.save(book);
 
         return "redirect:/book";
     }
@@ -104,7 +129,7 @@ public class BooksController {
     //Deleting book from DB
     @DeleteMapping("/{id}")
     public String delete(@PathVariable("id") int id) throws SQLException {
-        bookDAO.delete(id);
+        bookService.delete(id);
         return "redirect:/book";
     }
 }
